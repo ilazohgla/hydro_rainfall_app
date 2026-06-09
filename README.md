@@ -3,7 +3,7 @@
 > **Analisis Curah Hujan Spasial Multi-Dataset berbasis Google Earth Engine**
 > Dibangun dengan Python · Streamlit · geemap · Plotly
 
-[![Streamlit App](https://img.shields.io/badge/Streamlit-1.35%2B-red?logo=streamlit)](https://your-app.streamlit.app)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-1.35%2B-red?logo=streamlit)](https://hydrorainfallapp.streamlit.app)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GEE](https://img.shields.io/badge/Google%20Earth%20Engine-4285F4?logo=google&logoColor=white)](https://earthengine.google.com)
