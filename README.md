@@ -109,7 +109,7 @@ compute_threshold_summary()   ← Klasifikasi BMKG
 
 ```bash
 # 1. Clone repositori
-git clone https://github.com/yourusername/hydro-rainfall-analyzer.git
+git clone https://github.com/ilazohgla/hydro-rainfall-app.git
 cd hydro-rainfall-analyzer
 
 # 2. Buat virtual environment
@@ -250,13 +250,17 @@ stats = image.reduceRegion(
 
 ### Klasifikasi Intensitas (BMKG)
 
-| Kelas | Range (mm/hari) | Kode Warna |
-|-------|----------------|------------|
-| Tidak Hujan | < 5 | `#0d1117` |
-| Hujan Ringan | 5 – 20 | `#0077b6` |
-| Hujan Sedang | 20 – 50 | `#00b4d8` |
-| Hujan Lebat | 50 – 100 | `#f3722c` |
-| Hujan Sangat Lebat | > 100 | `#f94144` |
+| Kelas / Kategori | Range (mm/hari) | Kode Warna |
+|------------------|----------------|------------|
+| Sangat Ringan / Normal | < 10 | `#3D0909` |
+| Ringan | 10 – 20 | `#8B251E` |
+| Sedang | 20 – 50 | `#D95F02` |
+| Lebat | 50 – 75 | `#E6AB02` |
+| Sangat Lebat | 75 – 100 | `#FFF200` |
+| Ekstrem (Level I) | 100 – 150 | `#D2F53C` |
+| Ekstrem (Level II) | 150 – 200 | `#89DB89` |
+| Ekstrem (Level III) | 200 – 250 | `#34A834` |
+| Ekstrem (Bencana) | ≥ 250 | `#005A00` |
 
 ---
 
@@ -303,9 +307,9 @@ Dibangun sebagai proyek portofolio oleh seorang **Analis Hidrologi** yang berfok
 - Analisis data penginderaan jauh (remote sensing)
 - Pengembangan tools geospasial berbasis Python
 
-📧 Email: your.email@domain.com
-🔗 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com)
-🐙 GitHub: [github.com/yourusername](https://github.com)
+📧 Email: qodri.alghozali@gmail.com
+🔗 LinkedIn: [https://www.linkedin.com/in/muhammad-qodri-al-ghozali-a7b11120b/](https://linkedin.com)
+🐙 GitHub: [github.com/ilazohgla](https://github.com)
 
 ---
 
