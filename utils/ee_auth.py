@@ -34,16 +34,18 @@ def initialize_ee() -> tuple[bool, str]:
         if hasattr(st, "secrets") and "GEE_SERVICE_ACCOUNT" in st.secrets:
             service_account_email = st.secrets["GEE_SERVICE_ACCOUNT"]
             private_key = st.secrets["GEE_PRIVATE_KEY"]
+            project_id = st.secrets.get("GEE_PROJECT_ID", "")
 
             # Buat credentials dari private key yang di-store di secrets
             credentials = ee.ServiceAccountCredentials(
                 email=service_account_email,
                 key_data=private_key,
             )
-            ee.Initialize(credentials)
+            # Pass project_id secara eksplisit untuk mencegah hanging/timeout
+            ee.Initialize(credentials, project=project_id)
             return True, "Berhasil diinisialisasi via Streamlit Secrets (Service Account)"
     except Exception as e:
-        pass  # Lanjut ke strategy berikutnya
+        print(f"Strategy 1 Failed: {e}")
 
     # ── Strategy 2: Environment Variable (Docker / CI) ────────────────────────
     try:
@@ -54,18 +56,21 @@ def initialize_ee() -> tuple[bool, str]:
                 email=sa_info["client_email"],
                 key_data=sa_info["private_key"],
             )
-            ee.Initialize(credentials)
+            project_id = sa_info.get("project_id", os.environ.get("GEE_PROJECT_ID", ""))
+            ee.Initialize(credentials, project=project_id)
             return True, "Berhasil diinisialisasi via Environment Variable"
     except Exception as e:
-        pass
+        print(f"Strategy 2 Failed: {e}")
 
     # ── Strategy 3: Local credentials (Development) ──────────────────────────
     try:
-        # ee.Authenticate() sudah pernah dijalankan sebelumnya
-        ee.Initialize(project=os.environ.get("GEE_PROJECT_ID", ""))
-        return True, "Berhasil diinisialisasi via kredensial lokal"
+        # ee.Initialize dengan project dari environment variable
+        project_id = os.environ.get("GEE_PROJECT_ID", "")
+        if project_id:
+            ee.Initialize(project=project_id)
+            return True, f"Berhasil diinisialisasi via kredensial lokal dengan project: {project_id}"
     except Exception as e:
-        pass
+        print(f"Strategy 3 Failed: {e}")
 
     # ── Strategy 4: Credential file path ─────────────────────────────────────
     try:
