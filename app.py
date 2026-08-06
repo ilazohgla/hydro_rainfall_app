@@ -71,8 +71,14 @@ def load_css():
             --sans: 'Space Grotesk', system-ui, sans-serif;
         }
 
-        html, body, [class*="css"], [class*="st-"] {
+        html, body, [class*="css"] {
             font-family: var(--sans);
+        }
+
+        /* Ikon Material (chevron expander, panah selectbox, ikon kalender) —
+           jangan sampai tertimpa override font global di atas */
+        [data-testid="stIconMaterial"], [data-testid="stIcon"] {
+            font-family: "Material Symbols Rounded", "Material Icons", sans-serif !important;
         }
 
         /* ── Flat canvas ── */
