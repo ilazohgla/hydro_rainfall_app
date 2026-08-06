@@ -1,107 +1,159 @@
 # 🌧️ Hydro Rainfall Analyzer
 
-> **Analisis Curah Hujan Spasial Multi-Dataset berbasis Google Earth Engine**
-> Dibangun dengan Python · Streamlit · geemap · Plotly
+> **Analisis curah hujan spasial multi-dataset berbasis Google Earth Engine (GEE).**
+> Pilih dataset satelit, tentukan wilayah & periode, lalu dapatkan statistik, grafik interaktif, dan peta distribusi hujan — semuanya dari browser.
 
-[![Streamlit App](https://img.shields.io/badge/Streamlit-1.35%2B-red?logo=streamlit)](https://hydrorainfallapp.streamlit.app)
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org)
+[![Streamlit App](https://img.shields.io/badge/🚀%20Live%20App-hydrorainfallapp.streamlit.app-22d3ee?logo=streamlit&logoColor=white)](https://hydrorainfallapp.streamlit.app)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GEE](https://img.shields.io/badge/Google%20Earth%20Engine-4285F4?logo=google&logoColor=white)](https://earthengine.google.com)
+[![Made with Streamlit](https://img.shields.io/badge/Made%20with-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
+
+---
+
+## 📑 Daftar Isi
+
+- [Tentang Proyek](#-tentang-proyek)
+- [Fitur Utama](#-fitur-utama)
+- [Tampilan Aplikasi](#-tampilan-aplikasi)
+- [Cara Menggunakan](#-cara-menggunakan)
+- [Memahami Hasil Analisis](#-memahami-hasil-analisis)
+- [Dataset yang Didukung](#-dataset-yang-didukung)
+- [Instalasi Lokal](#-instalasi--menjalankan-secara-lokal)
+- [Autentikasi Google Earth Engine](#-autentikasi-google-earth-engine)
+- [Deploy ke Streamlit Cloud](#-deploy-ke-streamlit-cloud)
+- [Arsitektur Aplikasi](#-arsitektur-aplikasi)
+- [Metodologi](#-metodologi)
+- [Stack Teknologi](#-stack-teknologi)
+- [Lisensi](#-lisensi)
 
 ---
 
 ## 📌 Tentang Proyek
 
-**Hydro Rainfall Analyzer** adalah aplikasi web analisis curah hujan berbasis cloud yang memanfaatkan kekuatan komputasi **Google Earth Engine (GEE)** untuk memproses dataset curah hujan satelit skala regional hingga global. Aplikasi ini dirancang untuk mendukung kebutuhan **analis hidrologi, peneliti iklim, dan insinyur sumber daya air**.
+**Hydro Rainfall Analyzer** adalah aplikasi web open-source untuk analisis curah hujan yang memanfaatkan komputasi cloud **Google Earth Engine** untuk memproses dataset hujan satelit (GPM IMERG, CHIRPS, GSMaP) pada skala regional hingga global.
 
-### Fitur Utama
+Aplikasi ini dirancang untuk membantu:
 
-| Fitur | Keterangan |
-|-------|-----------|
-| 🛰️ **Multi-Dataset** | GPM IMERG, CHIRPS Daily, GSMaP (JAXA) |
-| 📅 **Fleksibel Temporal** | Agregasi harian, mingguan, bulanan |
-| 🗺️ **Visualisasi Spasial** | Peta interaktif dengan geemap + Folium |
-| 📊 **Statistik Spasial** | Mean, Min, Max, StdDev, Persentil (Pxx) |
-| 🌩️ **Analisis Threshold** | Klasifikasi hujan BMKG (ringan → ekstrem) |
-| 📐 **Input AOI Fleksibel** | Bounding Box, GeoJSON Upload, Provinsi Indonesia |
-| 🇮🇩 **Indonesia-Ready** | Semua 34 Provinsi Indonesia tersedia sebagai preset |
-| ⬇️ **Export CSV** | Download hasil analisis langsung dari browser |
+| Pengguna | Kegunaan |
+|---------|----------|
+| 👨‍🔬 **Analis hidrologi** | Memantau distribusi hujan harian & kejadian ekstrem |
+| 🌍 **Peneliti iklim** | Analisis statistik spasial multi-dekade |
+| 🏗️ **Insinyur sumber daya air** | Input untuk perencanaan drainase, bendungan, dan irigasi |
+| 🎓 **Mahasiswa & akademisi** | Eksplorasi data hujan satelit tanpa perlu infrastruktur sendiri |
+
+Tanpa perlu mengunduh data atau memiliki mesin khusus — cukup browser dan koneksi internet.
 
 ---
 
-## 🏗️ Arsitektur Aplikasi
+## ✨ Fitur Utama
+
+| Fitur | Keterangan |
+|-------|-----------|
+| 🛰️ **Multi-Dataset** | GPM IMERG (NASA), CHIRPS (UCSB), GSMaP (JAXA) |
+| 📅 **Agregasi Fleksibel** | Harian, mingguan, bulanan |
+| 🗺️ **Peta Spasial Interaktif** | Layer hasil GEE + basemap OSM/Google Satellite + legenda BMKG |
+| 📊 **Statistik Spasial** | Mean, Min, Max, StdDev, Persentil (P50–P99) |
+| 🌩️ **Analisis Threshold** | Deteksi hujan lebat & ekstrem, klasifikasi intensitas BMKG |
+| 📐 **Input AOI Fleksibel** | Bounding box manual, upload GeoJSON/Shapefile, atau preset provinsi |
+| 🇮🇩 **Indonesia-Ready** | Preset **34 provinsi** Indonesia |
+| ⬇️ **Ekspor CSV** | Unduh hasil analisis langsung dari browser |
+| 🎨 **UI Modern** | Tema dark flat "Hydro" — desain presisi, aksen cyan, nyaman untuk data |
+
+---
+
+## 🖥️ Tampilan Aplikasi
+
+![Hydro Rainfall Analyzer — halaman utama](docs/screenshot.png)
+
+*Halaman utama: panel kontrol di kiri (dataset, periode, AOI, parameter), ringkasan dataset & alur kerja di tengah.*
+
+---
+
+## 🚀 Cara Menggunakan
+
+### Akses langsung (tanpa instalasi)
+
+Buka **[hydrorainfallapp.streamlit.app](https://hydrorainfallapp.streamlit.app)** — aplikasi berjalan sepenuhnya di cloud.
+
+### Alur kerja 5 langkah
 
 ```
-hydro-rainfall-analyzer/
-│
-├── app.py                      # Entry point Streamlit
-├── requirements.txt            # Dependensi Python
-├── .gitignore
-│
-├── config/
-│   ├── __init__.py
-│   └── settings.py             # Konfigurasi dataset GEE, provinsi, threshold
-│
-├── utils/
-│   ├── __init__.py
-│   ├── ee_auth.py              # Autentikasi Earth Engine (multi-strategy)
-│   ├── ee_processing.py        # Logika inti GEE: aggregasi + statistik
-│   └── chart_builder.py        # Builder grafik Plotly (dark theme)
-│
-└── .streamlit/
-    ├── config.toml             # Konfigurasi tema Streamlit
-    └── secrets.toml.template   # Template autentikasi (JANGAN di-commit)
+1️⃣ Pilih Dataset  →  GPM IMERG / CHIRPS / GSMaP
+        │
+2️⃣ Tentukan Periode  →  Tanggal mulai & selesai
+        │
+3️⃣ Definisikan AOI  →  Bounding box / GeoJSON / Shapefile / Provinsi
+        │
+4️⃣ Atur Parameter  →  Agregasi, threshold hujan lebat, persentil
+        │
+5️⃣ Klik "Jalankan Analisis"  →  hasil muncul dalam beberapa detik
 ```
 
-### Alur Data
+### Detail tiap langkah
 
-```
-[GEE ImageCollection]
-       │
-       ▼
-aggregate_to_daily()          ← Konversi sub-daily → harian/mingguan/bulanan
-       │                         (sum + scale_factor ke mm)
-       ▼
-build_stats_fc()              ← reduceRegion per periode
-       │                         (Mean, Min, Max, StdDev, P95)
-       ▼
-compute_threshold_summary()   ← Klasifikasi BMKG
-       │                         (Normal, Lebat, Ekstrem)
-       ▼
-[Plotly Charts + geemap]      ← Visualisasi interaktif di Streamlit
-```
+**1. Dataset** — pilih sumber data hujan satelit (lihat [tabel dataset](#-dataset-yang-didukung) untuk perbedaan resolusi & cakupan).
+
+**2. Periode** — rentang tanggal analisis. Aplikasi otomatis menyesuaikan agregasi (harian/mingguan/bulanan) dengan dataset yang dipilih.
+
+**3. AOI (Area of Interest)** — tentukan wilayah analisis dengan 4 cara:
+- **Bounding Box Manual** — masukkan koordinat lon/lat langsung (paling cepat untuk wilayah persegi)
+- **Unggah GeoJSON** — file `.geojson` / `.json` dengan fitur polygon
+- **Unggah Shapefile (.zip)** — archive `.zip` berisi `.shp`, `.shx`, `.dbf`, `.prj` (otomatis direproyeksi ke EPSG:4326)
+- **Provinsi Indonesia** — pilih dari 34 preset provinsi
+
+**4. Parameter** — atur threshold hujan lebat (default 50 mm/hari) dan persentil statistik (default P95).
+
+**5. Jalankan** — proses berjalan di Google Earth Engine dengan progress bar, lalu hasil tampil dalam 5 tab (lihat di bawah).
+
+---
+
+## 📊 Memahami Hasil Analisis
+
+Setelah analisis selesai, muncul **5 kartu metrik** dan **5 tab hasil**:
+
+### Kartu Metrik
+| Metrik | Arti |
+|--------|------|
+| 🌧️ Total Curah Hujan | Akumulasi rata-rata spasial selama periode |
+| 📊 Rata-rata Harian | Mean spasial per hari |
+| ⬆️ Maksimum | Nilai tertinggi harian |
+| 📈 P95 | Persentil ke-95 — indikator kejadian ekstrem |
+| ⛈️ Hari Hujan Lebat | Jumlah hari dengan hujan ≥ threshold |
+
+### Tab Hasil
+
+| Tab | Isi |
+|-----|-----|
+| 📈 **Time Series** | Grafik area curah hujan harian + garis threshold + highlight kejadian ekstrem |
+| 📊 **Statistik Spasial** | Bar chart bulanan (Mean/Max/Pxx) + akumulasi per bulan + pie klasifikasi intensitas |
+| 🔥 **Heatmap Threshold** | Kalender intensitas hujan (bulan × hari) dengan palet BMKG |
+| 🗺️ **Peta** | Peta distribusi spasial rata-rata hujan harian + legenda BMKG interaktif |
+| 📋 **Data Tabel** | Tabel statistik harian lengkap, bisa diunduh sebagai **CSV** |
+
+> 💡 **Tip**: Kombinasi tab *Time Series* + *Peta* paling berguna untuk mengidentifikasi **kapan** dan **di mana** hujan ekstrem terjadi.
 
 ---
 
 ## 🛰️ Dataset yang Didukung
 
-### GPM IMERG V07 (NASA)
-- **Asset GEE**: `NASA/GPM_L3/IMERG_V07`
-- **Resolusi Spasial**: 0.1° (~11 km)
-- **Resolusi Temporal**: 30 menit
-- **Cakupan**: 2000 – sekarang
-- **Band**: `precipitation` (mm/hr) → dikali 0.5 → mm per 30 menit
+| Dataset | Asset GEE | Resolusi Spasial | Resolusi Temporal | Cakupan |
+|---------|-----------|------------------|-------------------|---------|
+| **GPM IMERG V07** (NASA) | `NASA/GPM_L3/IMERG_V07` | 0.1° (~11 km) | 30 menit | 2000 – sekarang |
+| **CHIRPS Daily** (UCSB) | `UCSB-CHG/CHIRPS/DAILY` | 0.05° (~5.5 km) | Harian | 1981 – sekarang |
+| **GSMaP Operational** (JAXA) | `JAXA/GPM_L3/GSMaP/v6/operational` | 0.1° (~11 km) | 1 jam | 2014 – sekarang |
 
-### CHIRPS Daily (UCSB)
-- **Asset GEE**: `UCSB-CHG/CHIRPS/DAILY`
-- **Resolusi Spasial**: 0.05° (~5.5 km)
-- **Resolusi Temporal**: Harian
-- **Cakupan**: 1981 – sekarang
-- **Band**: `precipitation` (mm/hari)
-
-### GSMaP Operational (JAXA)
-- **Asset GEE**: `JAXA/GPM_L3/GSMaP/v6/operational`
-- **Resolusi Spasial**: 0.1° (~11 km)
-- **Resolusi Temporal**: 1 jam
-- **Cakupan**: 2014 – sekarang
-- **Band**: `hourlyPrecipRate` (mm/hr) → dikali 1 → mm per jam
+**Catatan konversi:**
+- GPM IMERG: band `precipitation` (mm/jam) × 0.5 → mm per 30 menit
+- CHIRPS: band `precipitation` (mm/hari) × 1.0 → langsung mm/hari
+- GSMaP: band `hourlyPrecipRate` (mm/jam) × 1.0 → mm per jam
 
 ---
 
-## ⚙️ Instalasi & Menjalankan Secara Lokal
+## 🛠️ Instalasi & Menjalankan Secara Lokal
 
 ### Prasyarat
-- Python 3.10 atau 3.11
+- Python **3.10 atau 3.11**
 - Akun Google Earth Engine ([daftar gratis](https://earthengine.google.com/signup/))
 - Git
 
@@ -109,8 +161,8 @@ compute_threshold_summary()   ← Klasifikasi BMKG
 
 ```bash
 # 1. Clone repositori
-git clone https://github.com/ilazohgla/hydro-rainfall-app.git
-cd hydro-rainfall-analyzer
+git clone https://github.com/ilazohgla/hydro_rainfall_app.git
+cd hydro_rainfall_app
 
 # 2. Buat virtual environment
 python -m venv venv
@@ -130,13 +182,13 @@ earthengine authenticate
 streamlit run app.py
 ```
 
-Buka browser di `http://localhost:8501`
+Buka browser di **http://localhost:8501** 🎉
 
 ---
 
 ## 🔐 Autentikasi Google Earth Engine
 
-Aplikasi ini menggunakan **strategi autentikasi berlapis** untuk mendukung lingkungan development dan production:
+Aplikasi menggunakan **strategi autentikasi berlapis** agar bekerja di berbagai lingkungan:
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -149,14 +201,14 @@ Aplikasi ini menggunakan **strategi autentikasi berlapis** untuk mendukung lingk
 └─────┴───────────────────────────────────────────────┘
 ```
 
-### Untuk Development Lokal
+### Untuk development lokal
 
 ```bash
 # Jalankan sekali, ikuti instruksi di browser
 earthengine authenticate
 ```
 
-### Untuk Deployment Streamlit Cloud (Service Account)
+### Untuk deployment cloud (Service Account)
 
 1. **Buat Service Account** di [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts):
    - IAM & Admin → Service Accounts → Create Service Account
@@ -164,64 +216,105 @@ earthengine authenticate
 
 2. **Generate Private Key**:
    - Service Account → Keys → Add Key → JSON
-   - Simpan file `.json` di tempat aman (JANGAN upload ke GitHub!)
+   - Simpan file `.json` di tempat aman — **JANGAN pernah commit ke GitHub!**
 
 3. **Daftarkan Service Account di GEE**:
    ```
    https://code.earthengine.google.com/register
    ```
-   Pilih "Use with a Cloud Project" dan daftarkan email service account.
+   Pilih *"Use with a Cloud Project"* dan daftarkan email service account.
 
-4. **Tambahkan ke Streamlit Secrets**:
-   Di Streamlit Cloud Dashboard → App Settings → Secrets:
+4. **Tambahkan ke Streamlit Secrets** (Dashboard → App Settings → Secrets):
 
    ```toml
    GEE_SERVICE_ACCOUNT = "nama-sa@project-id.iam.gserviceaccount.com"
    GEE_PRIVATE_KEY = """
-   -----BEGIN RSA PRIVATE KEY-----
-   [isi private_key dari file JSON]
-   -----END RSA PRIVATE KEY-----
+   [REDACTED PRIVATE KEY]
    """
    ```
 
-   > ⚠️ **KEAMANAN**: Private key bersifat rahasia. Streamlit Secrets dienkripsi dan tidak terekspos ke publik atau ke dalam kode Anda.
+   > ⚠️ **Keamanan**: Private key bersifat rahasia. Streamlit Secrets dienkripsi dan tidak pernah terekspos ke publik atau ke dalam kode.
+
+> 📄 Template lengkap tersedia di [`.streamlit/secrets.toml.template`](.streamlit/secrets.toml.template).
 
 ---
 
-## 📊 Contoh Analisis
+## 🚀 Deploy ke Streamlit Cloud
 
-### Kasus: Analisis Kejadian Hujan Ekstrem di Jawa Barat (Jan 2024)
-
-```
-Dataset  : CHIRPS Daily
-Periode  : 2024-01-01 s/d 2024-01-31
-AOI      : Provinsi Jawa Barat (preset)
-Threshold: 50 mm/hari
-Persentil: P95
+```bash
+# 1. Push ke GitHub (pastikan secrets.toml TIDAK ter-commit — sudah di .gitignore)
+git add .
+git commit -m "Deploy Hydro Rainfall Analyzer"
+git push origin main
 ```
 
-**Hasil**:
-- Total curah hujan rata-rata: 312.4 mm
-- Rata-rata harian: 10.1 mm/hari
-- Hari hujan lebat (≥50 mm): 4 hari
-- Kejadian ekstrem (≥100 mm): 1 hari
-- P95: 47.3 mm/hari
+2. Buka [share.streamlit.io](https://share.streamlit.io) → **Create app**
+3. Hubungkan repositori GitHub → set **Main file: `app.py`**
+4. **Advanced settings → Secrets** → paste konfigurasi GEE di atas
+5. Klik **Deploy** — aplikasi live dalam hitungan menit ✅
+
+---
+
+## 🏗️ Arsitektur Aplikasi
+
+```
+hydro_rainfall_app/
+│
+├── app.py                      # Entry point Streamlit (UI + alur utama)
+├── requirements.txt            # Dependensi Python
+├── .gitignore
+│
+├── config/
+│   ├── __init__.py
+│   └── settings.py             # Konfigurasi dataset GEE, 34 provinsi, threshold
+│
+├── utils/
+│   ├── __init__.py
+│   ├── ee_auth.py              # Autentikasi Earth Engine (multi-strategy)
+│   ├── ee_processing.py        # Logika inti GEE: agregasi + statistik spasial
+│   └── chart_builder.py        # Builder grafik Plotly (tema Hydro)
+│
+├── docs/
+│   └── screenshot.png          # Screenshot aplikasi untuk README
+│
+└── .streamlit/
+    ├── config.toml             # Konfigurasi tema & server Streamlit
+    └── secrets.toml.template   # Template autentikasi (JANGAN di-commit)
+```
+
+### Alur Data
+
+```
+[GEE ImageCollection]
+       │
+       ▼
+aggregate_to_daily()          ← Konversi sub-harian → harian/mingguan/bulanan
+       │                         (sum + scale_factor ke mm)
+       ▼
+build_stats_fc()              ← reduceRegion per periode
+       │                         (Mean, Min, Max, StdDev, Pxx)
+       ▼
+compute_threshold_summary()   ← Klasifikasi intensitas BMKG
+       │                         (Normal, Lebat, Ekstrem)
+       ▼
+[Plotly Charts + Folium Map]  ← Visualisasi interaktif di Streamlit
+```
 
 ---
 
 ## 🔬 Metodologi
 
-### Konversi Ke Nilai Harian
+### Konversi ke nilai harian
 
 ```python
-# GPM IMERG (30 menit, mm/hr) → mm/hari
+# GPM IMERG (30 menit, mm/jam) → mm/hari
 daily_sum = collection
     .filterDate(day_start, day_end)
     .select("precipitation")
     .sum()
-    .multiply(0.5)   # mm/hr × 0.5 hr = mm per step
+    .multiply(0.5)   # mm/jam × 0.5 jam = mm per step
 
-# CHIRPS (sudah mm/hari) → langsung sum
+# CHIRPS (sudah mm/hari) → langsung
 daily_sum = collection
     .filterDate(day_start, day_end)
     .select("precipitation")
@@ -229,10 +322,9 @@ daily_sum = collection
     .multiply(1.0)
 ```
 
-### Statistik Spasial
+### Statistik spasial (satu pass, semua metrik)
 
 ```python
-# Combined reducer — satu pass, semua statistik
 reducer = (ee.Reducer.mean()
     .combine(ee.Reducer.min(), sharedInputs=True)
     .combine(ee.Reducer.max(), sharedInputs=True)
@@ -248,10 +340,10 @@ stats = image.reduceRegion(
 )
 ```
 
-### Klasifikasi Intensitas (BMKG)
+### Klasifikasi intensitas hujan (BMKG)
 
 | Kelas / Kategori | Range (mm/hari) | Kode Warna |
-|------------------|----------------|------------|
+|------------------|-----------------|------------|
 | Sangat Ringan / Normal | < 10 | `#3D0909` |
 | Ringan | 10 – 20 | `#8B251E` |
 | Sedang | 20 – 50 | `#D95F02` |
@@ -264,39 +356,27 @@ stats = image.reduceRegion(
 
 ---
 
-## 🚀 Deploy ke Streamlit Cloud
-
-```bash
-# 1. Push ke GitHub (pastikan secrets.toml TIDAK ter-commit)
-git add .
-git commit -m "Initial release: Hydro Rainfall Analyzer v1.0"
-git push origin main
-
-# 2. Buka https://share.streamlit.io
-# 3. New App → Connect repo → Set main file: app.py
-# 4. Advanced → Secrets → Paste konfigurasi GEE
-# 5. Deploy!
-```
-
----
-
 ## 🧰 Stack Teknologi
 
 | Komponen | Library | Versi |
 |----------|---------|-------|
-| Frontend / UI | Streamlit | ≥1.35 |
-| GEE Interface | geemap | ≥0.31 |
-| GEE Backend | earthengine-api | ≥0.1.390 |
-| Peta Interaktif | Folium | ≥0.15 |
-| Grafik | Plotly | ≥5.18 |
-| Data | Pandas / NumPy | ≥2.1 / ≥1.26 |
-| Geospasial | GeoPandas / Shapely | ≥0.14 / ≥2.0 |
+| Frontend / UI | Streamlit | ≥ 1.35 |
+| GEE Interface | geemap | ≥ 0.31 |
+| GEE Backend | earthengine-api | ≥ 0.1.390 |
+| Peta Interaktif | Folium | ≥ 0.15 |
+| Grafik | Plotly | ≥ 5.18 |
+| Data | Pandas / NumPy | ≥ 2.1 / ≥ 1.26 |
+| Geospasial | GeoPandas / Shapely | ≥ 0.14 / ≥ 2.0 |
 
 ---
 
-## 📁 Lisensi
+## 📄 Lisensi
 
-MIT License — bebas digunakan untuk keperluan pendidikan, penelitian, dan portofolio.
+Distributed under the **MIT License**. Bebas digunakan untuk keperluan pendidikan, penelitian, dan komersial — lihat file [LICENSE](LICENSE) untuk detail lengkap.
 
 ---
 
+<p align="center">
+  Dibangun dengan ❤️ dan ☁️ Google Earth Engine<br>
+  <sub>Streamlit · geemap · Plotly · Folium</sub>
+</p>
