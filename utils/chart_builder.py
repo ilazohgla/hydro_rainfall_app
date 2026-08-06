@@ -8,7 +8,6 @@ Builder untuk semua visualisasi Plotly dalam tema dark geo-science.
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-import plotly.express as px
 from plotly.subplots import make_subplots
 
 
@@ -16,36 +15,43 @@ from plotly.subplots import make_subplots
 
 PLOTLY_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="#0d1117",
-    font=dict(family="Space Grotesk, sans-serif", color="#e6edf3", size=12),
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(family="Space Grotesk, sans-serif", color="#e8f1ff", size=12),
     xaxis=dict(
-        gridcolor="#21262d",
-        linecolor="#30363d",
-        tickcolor="#30363d",
+        gridcolor="rgba(148,163,255,0.10)",
+        linecolor="rgba(148,163,255,0.22)",
+        tickcolor="rgba(148,163,255,0.22)",
+        zeroline=False,
         showgrid=True,
     ),
     yaxis=dict(
-        gridcolor="#21262d",
-        linecolor="#30363d",
-        tickcolor="#30363d",
+        gridcolor="rgba(148,163,255,0.10)",
+        linecolor="rgba(148,163,255,0.22)",
+        tickcolor="rgba(148,163,255,0.22)",
+        zeroline=False,
         showgrid=True,
     ),
     legend=dict(
-        bgcolor="rgba(22,27,34,0.8)",
-        bordercolor="#21262d",
+        bgcolor="rgba(10,16,32,0.6)",
+        bordercolor="rgba(148,163,255,0.2)",
         borderwidth=1,
-        font=dict(color="#c9d1d9"),
+        font=dict(color="#c9d6ef"),
     ),
     margin=dict(l=50, r=30, t=60, b=50),
     hovermode="x unified",
+    hoverlabel=dict(
+        bgcolor="#0d1730",
+        bordercolor="rgba(148,163,255,0.3)",
+        font=dict(color="#e8f1ff", family="Space Grotesk"),
+    ),
 )
 
-COLOR_RAIN = "#00b4d8"
-COLOR_MAX = "#f3722c"
-COLOR_P95 = "#f9c74f"
-COLOR_HEAVY = "#f94144"
-COLOR_MIN = "#48cae4"
-COLOR_MEAN = "#90e0ef"
+COLOR_RAIN = "#00e5ff"
+COLOR_MAX = "#fb923c"
+COLOR_P95 = "#fbbf24"
+COLOR_HEAVY = "#f43f5e"
+COLOR_MIN = "#38bdf8"
+COLOR_MEAN = "#7dd3fc"
 
 
 # ─── Time Series Chart ────────────────────────────────────────────────────────
@@ -77,7 +83,7 @@ def plot_time_series(df: pd.DataFrame, threshold: float, dataset_label: str) -> 
             x=x, y=df["mean"],
             name="Mean Spasial",
             fill="tozeroy",
-            fillcolor="rgba(0,180,216,0.15)",
+            fillcolor="rgba(0,229,255,0.12)",
             line=dict(color=COLOR_RAIN, width=2),
             hovertemplate="<b>Mean</b>: %{y:.2f} mm<extra></extra>",
         ),
@@ -139,7 +145,7 @@ def plot_time_series(df: pd.DataFrame, threshold: float, dataset_label: str) -> 
             go.Bar(
                 x=x, y=df["stddev"],
                 name="StdDev",
-                marker_color="rgba(144,224,239,0.6)",
+                marker_color="rgba(56,189,248,0.5)",
                 hovertemplate="<b>StdDev</b>: %{y:.2f} mm<extra></extra>",
             ),
             row=2, col=1,
@@ -149,14 +155,14 @@ def plot_time_series(df: pd.DataFrame, threshold: float, dataset_label: str) -> 
     layout.update(
         title=dict(
             text=f"<b>Time Series Curah Hujan</b> — {dataset_label}",
-            font=dict(size=15, color="#e6edf3"),
+            font=dict(size=15, color="#e8f1ff"),
         ),
         height=500,
         showlegend=True,
     )
     fig.update_layout(**layout)
-    fig.update_xaxes(gridcolor="#21262d", linecolor="#30363d")
-    fig.update_yaxes(gridcolor="#21262d", linecolor="#30363d")
+    fig.update_xaxes(gridcolor="rgba(148,163,255,0.10)", linecolor="rgba(148,163,255,0.22)")
+    fig.update_yaxes(gridcolor="rgba(148,163,255,0.10)", linecolor="rgba(148,163,255,0.22)")
 
     return fig
 
@@ -226,7 +232,7 @@ def plot_monthly_summary(df: pd.DataFrame) -> go.Figure:
     monthly_total = df_copy.groupby("month")["mean"].sum().reset_index()
     monthly_total.columns = ["month", "total_rain"]
 
-    colors = px.colors.sequential.Blues[3:]
+    colors = ["#155e75", "#0e7490", "#06b6d4", "#22d3ee", "#67e8f9", "#a5f3fc"]
     n = len(monthly_total)
     bar_colors = [colors[int(i / n * (len(colors) - 1))] for i in range(n)]
 
@@ -310,10 +316,10 @@ def plot_threshold_heatmap(df: pd.DataFrame, threshold: float = 50.0) -> go.Figu
         colorscale=colorscale,
         hovertemplate="<b>%{y}</b> — %{x}<br>Curah Hujan: %{z:.1f} mm<extra></extra>",
         colorbar=dict(
-            title=dict(text="mm/hari", font=dict(color="#e6edf3")),
-            tickfont=dict(color="#e6edf3"),
-            bgcolor="rgba(22,27,34,0.8)",
-            bordercolor="#21262d",
+            title=dict(text="mm/hari", font=dict(color="#e8f1ff")),
+            tickfont=dict(color="#e8f1ff"),
+            bgcolor="rgba(10,16,32,0.7)",
+            bordercolor="rgba(148,163,255,0.2)",
         ),
     ))
 
